@@ -2,8 +2,8 @@
   <div>
     <el-button type="primary" icon="el-icon-plus" style="margin: 10px 0" @click="addBrand">添加</el-button>
     <el-table style="width: 100%" border :data="list">
-      <el-table-column type="index" label="序号" width="80px" align="center" />
-      <el-table-column prop="tmName" label="品牌名称" width="width" />
+      <el-table-column type="index" label="序号" width="80px" align="center"/>
+      <el-table-column prop="tmName" label="品牌名称" width="width"/>
       <el-table-column prop="logoUrl" label="品牌LOGO" width="width">
         <template v-slot="{row}">
           <img :src="row.logoUrl" style="width: 100px;height: 100px" :alt="row.tmName">
@@ -12,7 +12,7 @@
       <el-table-column prop="prop" label="操作" width="width">
         <template v-slot="{row}">
           <el-button type="warning" icon="el-icon-edit" size="mini" @click="updateTradeMark(row)">修改</el-button>
-          <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteTradeMark(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -31,7 +31,7 @@
     <el-dialog :title="tmForm.id ? '修改品牌' : '添加品牌'" :visible.sync="dialogFormVisible">
       <el-form ref="ruleForm" style="width: 80%" :model="tmForm" :rules="rules">
         <el-form-item label="品牌名称" label-width="100px" prop="tmName">
-          <el-input v-model="tmForm.tmName" autocomplete="off" />
+          <el-input v-model="tmForm.tmName" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
           <el-upload
@@ -42,7 +42,7 @@
             :before-upload="beforeAvatarUpload"
           >
             <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"/>
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB</div>
           </el-upload>
 
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { reqAddOrUpdateTradeMark, reqTradeMarkList } from '@/api/product/tradeMark'
+import { reqAddOrUpdateTradeMark, reqDeleteTradeMark, reqTradeMarkList } from '@/api/product/tradeMark'
 
 export default {
   name: 'TradeMark',
@@ -141,6 +141,27 @@ export default {
           console.log('error submit!!')
           return false
         }
+      })
+    },
+    deleteTradeMark(row) {
+      this.$confirm(`你确定删除${row.tmName}？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const result = await reqDeleteTradeMark(row.id)
+        if (result.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          await this.getPageList(this.list.length > 1 ? this.page : this.page - 1)
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }
