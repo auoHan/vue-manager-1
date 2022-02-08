@@ -2,8 +2,8 @@
   <div>
     <el-button type="primary" icon="el-icon-plus" style="margin: 10px 0" @click="addBrand">添加</el-button>
     <el-table style="width: 100%" border :data="list">
-      <el-table-column type="index" label="序号" width="80px" align="center"/>
-      <el-table-column prop="tmName" label="品牌名称" width="width"/>
+      <el-table-column type="index" label="序号" width="80px" align="center" />
+      <el-table-column prop="tmName" label="品牌名称" width="width" />
       <el-table-column prop="logoUrl" label="品牌LOGO" width="width">
         <template v-slot="{row}">
           <img :src="row.logoUrl" style="width: 100px;height: 100px" :alt="row.tmName">
@@ -29,11 +29,11 @@
     />
 
     <el-dialog :title="tmForm.id ? '修改品牌' : '添加品牌'" :visible.sync="dialogFormVisible">
-      <el-form style="width: 80%" :model="tmForm">
-        <el-form-item label="品牌名称" label-width="100px">
-          <el-input v-model="tmForm.tmName" autocomplete="off"/>
+      <el-form ref="ruleForm" style="width: 80%" :model="tmForm" :rules="rules">
+        <el-form-item label="品牌名称" label-width="100px" prop="tmName">
+          <el-input v-model="tmForm.tmName" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="品牌LOGO" label-width="100px">
+        <el-form-item label="品牌LOGO" label-width="100px" prop="logoUrl">
           <el-upload
             class="avatar-uploader"
             action="/dev-api/admin/product/fileUpload"
@@ -42,7 +42,7 @@
             :before-upload="beforeAvatarUpload"
           >
             <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"/>
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
             <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB</div>
           </el-upload>
 
@@ -72,6 +72,15 @@ export default {
       tmForm: {
         tmName: '',
         logoUrl: ''
+      },
+      rules: {
+        tmName: [
+          { required: true, message: '请输入品牌名称', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'change' }
+        ],
+        logoUrl: [
+          { required: true, message: '请添加品牌LOGO' }
+        ]
       }
     }
   },
@@ -115,17 +124,24 @@ export default {
       }
       return isJPGOrPNG && isLt2M
     },
-    async addOrUpdateTradeMark() {
-      this.dialogFormVisible = false
-      const result = await reqAddOrUpdateTradeMark(this.tmForm)
-      console.log(result)
-      if (result.code === 200) {
-        this.$message({
-          type: 'success',
-          message: this.tmForm.id ? '修改品牌成功' : '添加品牌成功'
-        })
-        await this.getPageList(this.tmForm.id ? this.page : this.pages)
-      }
+    addOrUpdateTradeMark() {
+      this.$refs.ruleForm.validate(async success => {
+        if (success) {
+          this.dialogFormVisible = false
+          const result = await reqAddOrUpdateTradeMark(this.tmForm)
+          console.log(result)
+          if (result.code === 200) {
+            this.$message({
+              type: 'success',
+              message: this.tmForm.id ? '修改品牌成功' : '添加品牌成功'
+            })
+            await this.getPageList(this.tmForm.id ? this.page : this.pages)
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     }
   }
 }
