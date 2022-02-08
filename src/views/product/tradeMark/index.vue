@@ -29,34 +29,35 @@
     />
 
     <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
-      <el-form style="width: 80%">
+      <el-form style="width: 80%" :model="tmForm">
         <el-form-item label="品牌名称" label-width="100px">
-          <el-input autocomplete="off"></el-input>
+          <el-input v-model="tmForm.tmName" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="品牌LOGO" label-width="100px">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="/dev-api/admin/product/fileUpload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            :before-upload="beforeAvatarUpload"
+          >
+            <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过2MB</div>
           </el-upload>
 
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addOrUpdateTradeMark">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { reqTradeMarkList } from '@/api/product/tradeMark'
+import { reqAddOrUpdateTradeMark, reqTradeMarkList } from '@/api/product/tradeMark'
 
 export default {
   name: 'TradeMark',
@@ -67,7 +68,10 @@ export default {
       total: 0,
       list: [],
       dialogFormVisible: false,
-      imageUrl: ''
+      tmForm: {
+        tmName: '',
+        logoUrl: ''
+      }
     }
   },
   mounted() {
@@ -88,24 +92,33 @@ export default {
     },
     addBrand() {
       this.dialogFormVisible = true
+      this.tmForm = { tmName: '', logoUrl: '' }
     },
     updateTradeMark() {
       this.dialogFormVisible = true
     },
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.tmForm.logoUrl = res.data
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+      const isJPGOrPNG = file.type === 'image/jpeg' || 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isJPGOrPNG) {
+        this.$message.error('上传头像图片只能是 JPG 或者 PNG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+        this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      return isJPG && isLt2M;
+      return isJPGOrPNG && isLt2M
+    },
+    async addOrUpdateTradeMark() {
+      this.dialogFormVisible = false
+      const result = await reqAddOrUpdateTradeMark(this.tmForm)
+      console.log(result)
+      if (result.code === 200) {
+        this.$message(this.tmForm.id ? '修改品牌成功' : '添加品牌成功')
+        await this.getPageList()
+      }
     }
   }
 }
@@ -119,9 +132,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -130,6 +145,7 @@ export default {
   line-height: 178px;
   text-align: center;
 }
+
 .avatar {
   width: 178px;
   height: 178px;
