@@ -14,3 +14,4 @@ export const reqAttrList = (category1Id, category2Id, category3Id) => request({
   method: 'get'
 })
 export const reqAddOrUpdateAttr = data => request({ url: '/admin/product/saveAttrInfo', method: 'post', data })
+export const reqDeleteAttr = (attrId) => request({ url: `/admin/product/deleteAttr/${attrId}`, method: 'delete' })

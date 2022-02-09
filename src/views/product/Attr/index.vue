@@ -26,7 +26,7 @@
           <el-table-column prop="prop" label="操作" width="150">
             <template v-slot="{row}">
               <el-button type="warning" icon="el-icon-edit" size="mini" @click="updateAttr(row)"/>
-              <el-button type="danger" icon="el-icon-delete" size="mini"/>
+              <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteAttr(row)"/>
             </template>
           </el-table-column>
         </el-table>
@@ -89,9 +89,10 @@
 </template>
 
 <script>
-import { reqAddOrUpdateAttr, reqAttrList } from '@/api/product/attr'
+import { reqAddOrUpdateAttr, reqAttrList, reqDeleteAttr} from '@/api/product/attr'
 // 深拷贝
 import cloneDeep from 'lodash/cloneDeep'
+import { reqDeleteTradeMark } from '@/api/product/tradeMark'
 
 export default {
   name: 'Attr',
@@ -195,6 +196,27 @@ export default {
           this.$message({ type: 'error', message: '保存失败' })
           return false
         }
+      })
+    },
+    deleteAttr(row) {
+      this.$confirm(`你确定删除${row.attrName}？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const result = await reqDeleteAttr(row.id)
+        if (result.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          await this.getAttrList()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     }
   }
