@@ -34,7 +34,9 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+import CategorySelect from '@/components/CategorySelect'
 
+Vue.component(CategorySelect.name, CategorySelect)
 new Vue({
   el: '#app',
   router,
