@@ -92,7 +92,6 @@
 import { reqAddOrUpdateAttr, reqAttrList, reqDeleteAttr} from '@/api/product/attr'
 // 深拷贝
 import cloneDeep from 'lodash/cloneDeep'
-import { reqDeleteTradeMark } from '@/api/product/tradeMark'
 
 export default {
   name: 'Attr',
