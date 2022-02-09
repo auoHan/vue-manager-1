@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card style="margin: 20px 0">
-      <CategorySelect @getCategoryId="getCategoryId" />
+      <CategorySelect @getCategoryId="getCategoryId"/>
     </el-card>
     <el-card>
       <div v-show="isShowTable">
@@ -14,8 +14,8 @@
         >添加属性
         </el-button>
         <el-table style="width: 100%" border :data="attrList">
-          <el-table-column type="index" label="序号" width="80" align="center" />
-          <el-table-column prop="attrName" label="属性名称" width="150" />
+          <el-table-column type="index" label="序号" width="80" align="center"/>
+          <el-table-column prop="attrName" label="属性名称" width="150"/>
           <el-table-column prop="prop" label="属性值列表" width="width">
             <template v-slot="{row}">
               <el-tag v-for="attrValue in row.attrValueList" :key="attrValue.id" type="success" style="margin: 0 10px">
@@ -25,16 +25,16 @@
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="150">
             <template v-slot="{row}">
-              <el-button type="warning" icon="el-icon-edit" size="mini" @click="isShowTable=false" />
-              <el-button type="danger" icon="el-icon-delete" size="mini" />
+              <el-button type="warning" icon="el-icon-edit" size="mini" @click="isShowTable=false"/>
+              <el-button type="danger" icon="el-icon-delete" size="mini"/>
             </template>
           </el-table-column>
         </el-table>
       </div>
 
       <div v-show="!isShowTable">
-        <el-form ref="attrInfo" :inline="true" label-width="80px" :model="attrInfo" :rules="rules">
-          <el-form-item label="属性名" prop="attrName">
+        <el-form ref="attrInfo" :inline="true" label-width="80px" :model="attrInfo">
+          <el-form-item label="属性名">
             <el-input
               v-model="attrInfo.attrName"
               placeholder="请输入属性名"
@@ -44,20 +44,28 @@
         <el-button
           type="primary"
           icon="el-icon-plus"
+          :disabled="!attrInfo.attrName"
+          @click="addAttrValue"
         >添加属性值
         </el-button>
         <el-button @click="isShowTable = true">取消</el-button>
         <el-table
           style="width: 100%; margin: 20px 0"
           border
+          :data="attrInfo.attrValueList"
         >
-          <el-table-column align="center" type="index" label="序号" width="80" />
+          <el-table-column align="center" type="index" label="序号" width="80"/>
           <el-table-column width="width" prop="prop" label="属性值名称">
             <template v-slot="{ row }">
               <!-- 这里结构需要用到span与input进行来回的切换 -->
+              <el-input v-model="row.valueName" placeholder="请输入属性值" size="mini"/>
             </template>
           </el-table-column>
-          <el-table-column width="width" prop="prop" label="操作" />
+          <el-table-column width="width" prop="prop" label="操作">
+            <template v-slot="{row}">
+              <el-button type="danger" size="mini" icon="el-icon-delete"/>
+            </template>
+          </el-table-column>
         </el-table>
         <el-button type="primary">保存</el-button>
         <el-button @click="isShowTable = true">取消</el-button>
@@ -80,20 +88,9 @@ export default {
       isShowTable: false,
       attrInfo: {
         attrName: '',
-        attrValueList: [
-          {
-            attrId: 0,
-            valueName: ''
-          }
-        ],
+        attrValueList: [],
         categoryId: 0,
         categoryLevel: 3
-      },
-      rules: {
-        attrName: [
-          { required: true, message: '请输入属性名', trigger: 'blur' },
-          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'change' }
-        ]
       }
     }
   },
@@ -116,6 +113,12 @@ export default {
       if (result.code === 200) {
         this.attrList = result.data
       }
+    },
+    addAttrValue() {
+      this.attrInfo.attrValueList.push({
+        attrId: undefined,
+        valueName: ''
+      })
     }
   }
 }
