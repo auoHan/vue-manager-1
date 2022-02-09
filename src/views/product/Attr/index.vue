@@ -44,7 +44,7 @@
         <el-button
           type="primary"
           icon="el-icon-plus"
-          :disabled="!attrInfo.attrName"
+          :disabled="!attrInfo.attrName.trim()"
           @click="addAttrValue"
         >添加属性值
         </el-button>
@@ -58,7 +58,15 @@
           <el-table-column width="width" prop="prop" label="属性值名称">
             <template v-slot="{ row }">
               <!-- 这里结构需要用到span与input进行来回的切换 -->
-              <el-input v-model="row.valueName" placeholder="请输入属性值" size="mini"/>
+              <el-input
+                v-if="row.flag"
+                v-model="row.valueName"
+                placeholder="请输入属性值"
+                size="mini"
+                @blur="toLook(row)"
+                @keyup.native.enter="toLook(row)"
+              />
+              <span v-else style="display: block" @click="row.flag=true">{{ row.valueName }}</span>
             </template>
           </el-table-column>
           <el-table-column width="width" prop="prop" label="操作">
@@ -89,7 +97,7 @@ export default {
       attrList: [],
       isShowTable: true,
       attrInfo: {
-        attrName: '',
+        attrName: ''.trim(),
         attrValueList: [],
         categoryId: 0,
         categoryLevel: 3
@@ -118,14 +126,15 @@ export default {
     },
     addAttrValue() {
       this.attrInfo.attrValueList.push({
-        attrId: undefined,
-        valueName: ''
+        attrId: this.attrInfo.id,
+        valueName: ''.trim(),
+        flag: true
       })
     },
     addAttr() {
       this.isShowTable = false
       this.attrInfo = {
-        attrName: '',
+        attrName: ''.trim(),
         attrValueList: [],
         categoryId: this.category3Id,
         categoryLevel: 3
@@ -135,6 +144,22 @@ export default {
       this.isShowTable = false
       // 深拷贝
       this.attrInfo = cloneDeep(row)
+    },
+    toLook(row) {
+      if (row.valueName.trim() === '') {
+        this.$message('请你输入一个正常的属性值')
+        return
+      }
+      const isRepat = this.attrInfo.attrValueList.some(item => {
+        if (row !== item) {
+          return row.valueName === item.valueName
+        }
+      })
+      if (isRepat) {
+        this.$message('属性值重复了')
+        return
+      }
+      row.flag = false
     }
   }
 }
