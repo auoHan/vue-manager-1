@@ -9,3 +9,7 @@ export const reqCategory3List = (category2Id) => request({
   url: `/admin/product/getCategory3/${category2Id}`,
   method: 'get'
 })
+export const reqAttrList = (category1Id, category2Id, category3Id) => request({
+  url: `/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`,
+  method: 'get'
+})
