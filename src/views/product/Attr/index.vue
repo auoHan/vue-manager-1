@@ -72,7 +72,12 @@
           </el-table-column>
           <el-table-column width="width" prop="prop" label="操作">
             <template v-slot="{row,$index}">
-              <el-button type="danger" size="mini" icon="el-icon-delete"/>
+              <el-popconfirm
+                :title="`确定删除${row.valueName}吗？`"
+                @onConfirm="deleteAttrValue($index)"
+              >
+                <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete"/>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -173,6 +178,9 @@ export default {
       this.$nextTick(() => {
         this.$refs[index].focus()
       })
+    },
+    deleteAttrValue(index) {
+      this.attrInfo.attrValueList.splice(index, 1)
     }
   }
 }
