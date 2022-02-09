@@ -10,7 +10,7 @@
           icon="el-icon-plus"
           style="margin-bottom: 20px"
           :disabled="!category3Id"
-          @click="isShowTable=false"
+          @click="addAttr"
         >添加属性
         </el-button>
         <el-table style="width: 100%" border :data="attrList">
@@ -119,6 +119,15 @@ export default {
         attrId: undefined,
         valueName: ''
       })
+    },
+    addAttr() {
+      this.isShowTable = false
+      this.attrInfo = {
+        attrName: '',
+        attrValueList: [],
+        categoryId: this.category3Id,
+        categoryLevel: 3
+      }
     }
   }
 }
