@@ -56,21 +56,22 @@
         >
           <el-table-column align="center" type="index" label="序号" width="80"/>
           <el-table-column width="width" prop="prop" label="属性值名称">
-            <template v-slot="{ row }">
+            <template v-slot="{ row, $index}">
               <!-- 这里结构需要用到span与input进行来回的切换 -->
               <el-input
                 v-if="row.flag"
+                :ref="$index"
                 v-model="row.valueName"
                 placeholder="请输入属性值"
                 size="mini"
                 @blur="toLook(row)"
                 @keyup.native.enter="toLook(row)"
               />
-              <span v-else style="display: block" @click="toEdit(row)">{{ row.valueName }}</span>
+              <span v-else style="display: block" @click="toEdit(row,$index)">{{ row.valueName }}</span>
             </template>
           </el-table-column>
           <el-table-column width="width" prop="prop" label="操作">
-            <template v-slot="{row}">
+            <template v-slot="{row,$index}">
               <el-button type="danger" size="mini" icon="el-icon-delete"/>
             </template>
           </el-table-column>
@@ -130,6 +131,9 @@ export default {
         valueName: ''.trim(),
         flag: true
       })
+      this.$nextTick(() => {
+        this.$refs[this.attrInfo.attrValueList.length - 1].focus()
+      })
     },
     addAttr() {
       this.isShowTable = false
@@ -164,8 +168,11 @@ export default {
       }
       row.flag = false
     },
-    toEdit(row) {
+    toEdit(row, index) {
       row.flag = true
+      this.$nextTick(() => {
+        this.$refs[index].focus()
+      })
     }
   }
 }
