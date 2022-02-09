@@ -25,7 +25,7 @@
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="150">
             <template v-slot="{row}">
-              <el-button type="warning" icon="el-icon-edit" size="mini" @click="isShowTable=false"/>
+              <el-button type="warning" icon="el-icon-edit" size="mini" @click="updateAttr(row)"/>
               <el-button type="danger" icon="el-icon-delete" size="mini"/>
             </template>
           </el-table-column>
@@ -76,6 +76,8 @@
 
 <script>
 import { reqAttrList } from '@/api/product/attr'
+// 深拷贝
+import cloneDeep from 'lodash/cloneDeep'
 
 export default {
   name: 'Attr',
@@ -85,7 +87,7 @@ export default {
       category2Id: '',
       category3Id: '',
       attrList: [],
-      isShowTable: false,
+      isShowTable: true,
       attrInfo: {
         attrName: '',
         attrValueList: [],
@@ -128,6 +130,11 @@ export default {
         categoryId: this.category3Id,
         categoryLevel: 3
       }
+    },
+    updateAttr(row) {
+      this.isShowTable = false
+      // 深拷贝
+      this.attrInfo = cloneDeep(row)
     }
   }
 }
