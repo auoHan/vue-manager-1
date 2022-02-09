@@ -66,7 +66,7 @@
                 @blur="toLook(row)"
                 @keyup.native.enter="toLook(row)"
               />
-              <span v-else style="display: block" @click="row.flag=true">{{ row.valueName }}</span>
+              <span v-else style="display: block" @click="toEdit(row)">{{ row.valueName }}</span>
             </template>
           </el-table-column>
           <el-table-column width="width" prop="prop" label="操作">
@@ -144,6 +144,9 @@ export default {
       this.isShowTable = false
       // 深拷贝
       this.attrInfo = cloneDeep(row)
+      this.attrInfo.attrValueList.forEach(item => {
+        this.$set(item, 'flag', false)
+      })
     },
     toLook(row) {
       if (row.valueName.trim() === '') {
@@ -160,6 +163,9 @@ export default {
         return
       }
       row.flag = false
+    },
+    toEdit(row) {
+      row.flag = true
     }
   }
 }
