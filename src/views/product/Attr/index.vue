@@ -81,7 +81,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary">保存</el-button>
+        <el-button type="primary" :disabled="attrInfo.attrValueList.length<1" @click="addOrUpdateAttr">保存</el-button>
         <el-button @click="isShowTable = true">取消</el-button>
       </div>
     </el-card>
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { reqAttrList } from '@/api/product/attr'
+import { reqAddOrUpdateAttr, reqAttrList } from '@/api/product/attr'
 // 深拷贝
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -181,6 +181,21 @@ export default {
     },
     deleteAttrValue(index) {
       this.attrInfo.attrValueList.splice(index, 1)
+    },
+    addOrUpdateAttr() {
+      this.attrInfo.attrValueList = this.attrInfo.attrValueList.filter(async item => {
+        if (item.valueName.trim() !== '') {
+          delete item.flag
+          await reqAddOrUpdateAttr(this.attrInfo)
+          this.isShowTable = true
+          this.$message({ type: 'success', message: '保存成功' })
+          await this.getAttrList()
+          return true
+        } else {
+          this.$message({ type: 'error', message: '保存失败' })
+          return false
+        }
+      })
     }
   }
 }
