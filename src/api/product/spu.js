@@ -6,3 +6,4 @@ export const reqSpuList = (page, limit, category3Id) => request({
   params: { category3Id }
 })
 export const reqSpu = (spuId) => request({ url: `/admin/product/getSpuById/${spuId}`, method: 'get' })
+export const reqTradeMarkList = () => request({ url: '/admin/product/baseTrademark/getTrademarkList', method: 'get' })
