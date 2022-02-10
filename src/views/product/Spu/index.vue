@@ -4,12 +4,14 @@
       <CategorySelect :show="!show" @getCategoryId="getCategoryId"/>
     </el-card>
     <el-card>
-      <div>
+      <div v-show="scene===0">
         <!-- 展示SPU列表的结构 -->
         <el-button
           type="primary"
           icon="el-icon-plus"
+          style="margin-bottom: 20px"
           :disabled="!category3Id"
+          @click="addSpu"
         >添加SPU
         </el-button
         >
@@ -34,6 +36,7 @@
                 icon="el-icon-edit"
                 size="mini"
                 title="修改spu"
+                @click="updateSpu(row)"
               ></hint-button>
               <hint-button
                 type="info"
@@ -67,15 +70,20 @@
         >
         </el-pagination>
       </div>
+      <SpuForm v-show="scene===1" ref="spu" @changeScene="changeScene"></SpuForm>
+      <SkuForm v-show="scene===2"></SkuForm>
     </el-card>
   </div>
 </template>
 
 <script>
 import { reqSpuList } from '@/api/product/spu'
+import SpuForm from '@/views/product/Spu/SpuForm'
+import SkuForm from '@/views/product/Spu/SkuForm'
 
 export default {
   name: 'Spu',
+  components: { SkuForm, SpuForm },
   data() {
     return {
       show: true,
@@ -86,7 +94,8 @@ export default {
       limit: 3,
       total: 0,
       pages: 0,
-      records: []
+      records: [],
+      scene: 0
     }
   },
   methods: {
@@ -116,6 +125,16 @@ export default {
     handleSizeChange(limit) {
       this.limit = limit
       this.getSpuList()
+    },
+    addSpu() {
+      this.scene = 1
+    },
+    updateSpu(row) {
+      this.scene = 1
+      this.$refs.spu.initSpuData(row)
+    },
+    changeScene(scene) {
+      this.scene = scene
     }
   }
 }
