@@ -218,7 +218,10 @@ export default {
         this.saleAttrList = saleResult.data
       }
     },
-    addSaleAttr() {},
+    addSaleAttr() {
+      const [baseSaleAttrId, saleAttrName] = this.attrIdAndAttrName.split(':')
+      this.spu.spuSaleAttrList.push({ baseSaleAttrId, saleAttrName, spuSaleAttrValueList: [] })
+    },
     handleInputConfirm(row) {},
     addSaleAttrValue(row) {},
     addOrUpdateSpu() {},
