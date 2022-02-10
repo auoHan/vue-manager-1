@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card style="margin: 20px 0">
-      <CategorySelect :show="!show" @getCategoryId="getCategoryId"/>
+      <CategorySelect :show="scene!==0" @getCategoryId="getCategoryId"/>
     </el-card>
     <el-card>
       <div v-show="scene===0">
@@ -86,7 +86,6 @@ export default {
   components: { SkuForm, SpuForm },
   data() {
     return {
-      show: true,
       category1Id: '',
       category2Id: '',
       category3Id: '',
