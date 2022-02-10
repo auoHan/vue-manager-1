@@ -45,7 +45,7 @@
       <el-form-item label="销售属性">
         <el-select
           v-model="attrIdAndAttrName"
-          :placeholder="`还有${unSelectSaleAttr.length}未选择`"
+          :placeholder="unSelectSaleAttr.length===0 ? '没有了！':`还有${unSelectSaleAttr.length}未选择`"
         >
           <el-option
             v-for="(unselect, index) in unSelectSaleAttr"
@@ -221,9 +221,27 @@ export default {
     addSaleAttr() {
       const [baseSaleAttrId, saleAttrName] = this.attrIdAndAttrName.split(':')
       this.spu.spuSaleAttrList.push({ baseSaleAttrId, saleAttrName, spuSaleAttrValueList: [] })
+      this.attrIdAndAttrName = ''
     },
-    handleInputConfirm(row) {},
-    addSaleAttrValue(row) {},
+    addSaleAttrValue(row) {
+      this.$set(row, 'inputVisible', true)
+      this.$set(row, 'inputValue', '')
+    },
+    handleInputConfirm(row) {
+      console.log(row)
+      const { baseSaleAttrId, inputValue, saleAttrName } = row
+      if (inputValue.trim() === '') {
+        this.$message('属性值不能为空！')
+        return
+      }
+      const result = row.spuSaleAttrValueList.every(item => item.saleAttrValueName !== inputValue)
+      if (!result) {
+        this.$message('属性值重复了！')
+        return
+      }
+      row.spuSaleAttrValueList.push({ baseSaleAttrId, saleAttrValueName: inputValue, saleAttrName })
+      row.inputVisible = false
+    },
     addOrUpdateSpu() {},
     cancel() {
       this.$emit('changeScene', 0)
