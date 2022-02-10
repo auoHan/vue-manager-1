@@ -2,7 +2,7 @@
   <div>
     <el-form ref="form" label-width="80px" :model="spu">
       <el-form-item label="SPU名称">
-        <el-input v-model="spu.spuName" placeholder="SPU名称" />
+        <el-input v-model="spu.spuName" placeholder="SPU名称"/>
       </el-form-item>
       <el-form-item label="品牌">
         <el-select v-model="spu.tmId" placeholder="请选择品牌">
@@ -36,7 +36,7 @@
           :on-success="handlerSuccess"
           :file-list="spuImageList"
         >
-          <i class="el-icon-plus" />
+          <i class="el-icon-plus"/>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt="">
@@ -59,7 +59,8 @@
           icon="el-icon-plus"
           :disabled="!attrIdAndAttrName"
           @click="addSaleAttr"
-        >添加销售属性</el-button>
+        >添加销售属性
+        </el-button>
         <!-- 展示的是当前SPU属于自己的销售属性 -->
         <el-table style="width: 100%" border :data="spu.spuSaleAttrList">
           <el-table-column
@@ -68,7 +69,7 @@
             width="80px"
             align="center"
           />
-          <el-table-column prop="saleAttrName" label="属性名" width="width" />
+          <el-table-column prop="saleAttrName" label="属性名" width="width"/>
           <el-table-column prop="prop" label="属性值名称列表" width="width">
             <template slot-scope="{ row, $index }">
               <!--  " -->
@@ -79,7 +80,8 @@
                 closable
                 :disable-transitions="false"
                 @close="row.spuSaleAttrValueList.splice(index, 1)"
-              >{{ tag.saleAttrValueName }}</el-tag>
+              >{{ tag.saleAttrValueName }}
+              </el-tag>
               <!--  @keyup.enter.native="handleInputConfirm"  -->
               <el-input
                 v-if="row.inputVisible"
@@ -95,7 +97,8 @@
                 class="button-new-tag"
                 size="small"
                 @click="addSaleAttrValue(row)"
-              >添加</el-button>
+              >添加
+              </el-button>
             </template>
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
@@ -119,22 +122,19 @@
 </template>
 
 <script>
+import { reqBaseSaleAttrList, reqSpu, reqSpuImageList, reqTradeMarkList } from '@/api/product/spu'
+
 export default {
   name: 'SpuForm',
   data() {
     return {
       dialogImageUrl: '',
       dialogVisible: false,
-      spuImageList: '',
       attrIdAndAttrName: '',
-      spu: {
-        category3Id: undefined,
-        description: '',
-        spuImageList: [],
-        spuName: '',
-        spuSaleAttrList: [],
-        tmId: 2
-      }
+      spu: {},
+      tradeMarkList: [],
+      spuImageList: [],
+      saleAttrList: []
     }
   },
   methods: {
@@ -145,8 +145,23 @@ export default {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
-    initSpuData(spu) {
-      console.log(spu)
+    async initSpuData(spu) {
+      const spuResult = await reqSpu(spu.id)
+      if (spuResult.code === 200) {
+        this.spu = spuResult.data
+      }
+      const tradeMarkResult = await reqTradeMarkList()
+      if (tradeMarkResult.code === 200) {
+        this.tradeMarkList = tradeMarkResult.data
+      }
+      const spuImageResult = await reqSpuImageList(spu.id)
+      if (spuImageResult.code === 200) {
+        this.spuImageList = spuImageResult.data
+      }
+      const saleResult = await reqBaseSaleAttrList()
+      if (saleResult.code === 200) {
+        this.saleAttrList = saleResult.data
+      }
     },
     handlerSuccess() {},
     addSaleAttr() {},
