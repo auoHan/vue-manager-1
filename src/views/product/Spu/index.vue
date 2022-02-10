@@ -134,6 +134,7 @@ export default {
     },
     changeScene(scene) {
       this.scene = scene
+      this.getSpuList(this.page)
     }
   }
 }

@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { reqBaseSaleAttrList, reqSpu, reqSpuImageList, reqTradeMarkList } from '@/api/product/spu'
+import { reqAddOrUpdateSpu, reqBaseSaleAttrList, reqSpu, reqSpuImageList, reqTradeMarkList } from '@/api/product/spu'
 
 export default {
   name: 'SpuForm',
@@ -228,7 +228,6 @@ export default {
       this.$set(row, 'inputValue', '')
     },
     handleInputConfirm(row) {
-      console.log(row)
       const { baseSaleAttrId, inputValue, saleAttrName } = row
       if (inputValue.trim() === '') {
         this.$message('属性值不能为空！')
@@ -242,7 +241,19 @@ export default {
       row.spuSaleAttrValueList.push({ baseSaleAttrId, saleAttrValueName: inputValue, saleAttrName })
       row.inputVisible = false
     },
-    addOrUpdateSpu() {},
+    async addOrUpdateSpu() {
+      this.spu.spuImageList = this.spuImageList.map(item => {
+        return {
+          imgName: item.name || item.imgName,
+          imgUrl: (item.response && item.response.data) || item.imgUrl
+        }
+      })
+      const result = await reqAddOrUpdateSpu(this.spu)
+      if (result.code === 200) {
+        this.$message({ type: 'success', message: '保存成功' })
+        this.$emit('changeScene', 0)
+      }
+    },
     cancel() {
       this.$emit('changeScene', 0)
     }
