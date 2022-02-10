@@ -46,6 +46,7 @@
               ></hint-button>
               <el-popconfirm
                 title="这是一段内容确定删除吗？"
+                @onConfirm="deleteSpu(row)"
               >
                 <hint-button
                   slot="reference"
@@ -77,7 +78,7 @@
 </template>
 
 <script>
-import { reqSpuList } from '@/api/product/spu'
+import { reqDeleteSpu, reqSpuList } from '@/api/product/spu'
 import SpuForm from '@/views/product/Spu/SpuForm'
 import SkuForm from '@/views/product/Spu/SkuForm'
 
@@ -139,6 +140,14 @@ export default {
         this.getSpuList(this.page)
       } else if (flag === '添加') {
         this.getSpuList()
+      }
+    },
+    async deleteSpu(row) {
+      const result = await reqDeleteSpu(row.id)
+      if (result.code === 200) {
+        this.$message({ type: 'success', message: '删除成功' })
+        // 代表SPU个数大于1删除的时候停留在当前页，如果SPU个数小于1 回到上一页
+        this.getSpuList(this.records.length > 1 ? this.page : this.page - 1)
       }
     }
   }
