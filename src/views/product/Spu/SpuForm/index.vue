@@ -102,7 +102,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
-            <template slot-scope="{ row, $index }">
+            <template v-slot="{ row, $index }">
               <el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -171,8 +171,16 @@ export default {
       },
       tradeMarkList: [],
       spuImageList: [],
-      saleAttrList: [],
-      unSelectSaleAttr: []
+      saleAttrList: []
+    }
+  },
+  computed: {
+    unSelectSaleAttr() {
+      return this.saleAttrList.filter(item1 => {
+        return this.spu.spuSaleAttrList.every(item2 => {
+          return item1.name !== item2.saleAttrName
+        })
+      })
     }
   },
   methods: {
@@ -218,6 +226,22 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style>
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
 
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
 </style>
