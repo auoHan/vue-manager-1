@@ -5,3 +5,4 @@ export const reqSpuList = (page, limit, category3Id) => request({
   method: 'get',
   params: { category3Id }
 })
+export const reqSpu = (spuId) => request({ url: `/admin/product/getSpuById/${spuId}`, method: 'get' })
