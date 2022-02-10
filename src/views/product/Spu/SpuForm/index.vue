@@ -186,6 +186,10 @@ export default {
   methods: {
     handleRemove(file, fileList) {
       console.log(file, fileList)
+      this.spuImageList = fileList
+    },
+    handlerSuccess(response, file, fileList) {
+      this.spuImageList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
@@ -214,7 +218,6 @@ export default {
         this.saleAttrList = saleResult.data
       }
     },
-    handlerSuccess() {},
     addSaleAttr() {},
     handleInputConfirm(row) {},
     addSaleAttrValue(row) {},
