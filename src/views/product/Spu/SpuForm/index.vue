@@ -185,7 +185,6 @@ export default {
   },
   methods: {
     handleRemove(file, fileList) {
-      console.log(file, fileList)
       this.spuImageList = fileList
     },
     handlerSuccess(response, file, fileList) {
@@ -251,11 +250,28 @@ export default {
       const result = await reqAddOrUpdateSpu(this.spu)
       if (result.code === 200) {
         this.$message({ type: 'success', message: '保存成功' })
-        this.$emit('changeScene', 0)
+        this.$emit('changeScene', { scene: 0, flag: this.spu.id ? '修改' : '添加' })
+      }
+      Object.assign(this._data, this.$options.data())
+    },
+    async addSpuData(category3Id) {
+      this.spu.category3Id = category3Id
+      const tradeMarkResult = await reqTradeMarkList()
+      if (tradeMarkResult.code === 200) {
+        this.tradeMarkList = tradeMarkResult.data
+      }
+      const saleResult = await reqBaseSaleAttrList()
+      if (saleResult.code === 200) {
+        this.saleAttrList = saleResult.data
       }
     },
     cancel() {
-      this.$emit('changeScene', 0)
+      this.$emit('changeScene', { scene: 0, flag: '' })
+      //清理数据
+      //Object.assign:es6中新增的方法可以合并对象
+      //组件实例this._data,可以操作data当中响应式数据
+      //this.$options可以获取配置对象，配置对象的data函数执行，返回的响应式数据为空的
+      Object.assign(this._data, this.$options.data())
     }
   }
 }

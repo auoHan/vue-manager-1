@@ -127,14 +127,19 @@ export default {
     },
     addSpu() {
       this.scene = 1
+      this.$refs.spu.addSpuData(this.category3Id)
     },
     updateSpu(row) {
       this.scene = 1
       this.$refs.spu.initSpuData(row)
     },
-    changeScene(scene) {
+    changeScene({ scene, flag }) {
       this.scene = scene
-      this.getSpuList(this.page)
+      if (flag === '修改') {
+        this.getSpuList(this.page)
+      } else if (flag === '添加') {
+        this.getSpuList()
+      }
     }
   }
 }
