@@ -71,7 +71,7 @@
           />
           <el-table-column prop="saleAttrName" label="属性名" width="width"/>
           <el-table-column prop="prop" label="属性值名称列表" width="width">
-            <template slot-scope="{ row, $index }">
+            <template v-slot="{ row, $index }">
               <!--  " -->
               <!-- el-tag:用户展示已有属性值列表的数据的 -->
               <el-tag
@@ -131,10 +131,48 @@ export default {
       dialogImageUrl: '',
       dialogVisible: false,
       attrIdAndAttrName: '',
-      spu: {},
+      spu: {
+        // 三级分类的id
+        category3Id: 0,
+        // 描述
+        description: '',
+        // spu名称
+        spuName: '',
+        // 平台的id
+        tmId: '',
+        // 收集SPU图片的信息
+        spuImageList: [
+          // {
+          //   id: 0,
+          //   imgName: "string",
+          //   imgUrl: "string",
+          //   spuId: 0,
+          // },
+        ],
+        // 平台属性与属性值收集
+        spuSaleAttrList: [
+          // {
+          //   baseSaleAttrId: 0,
+          //   id: 0,
+          //   saleAttrName: "string",
+          //   spuId: 0,
+          //   spuSaleAttrValueList: [
+          //     {
+          //       baseSaleAttrId: 0,
+          //       id: 0,
+          //       isChecked: "string",
+          //       saleAttrName: "string",
+          //       saleAttrValueName: "string",
+          //       spuId: 0,
+          //     },
+          //   ],
+          // },
+        ]
+      },
       tradeMarkList: [],
       spuImageList: [],
-      saleAttrList: []
+      saleAttrList: [],
+      unSelectSaleAttr: []
     }
   },
   methods: {
@@ -156,7 +194,12 @@ export default {
       }
       const spuImageResult = await reqSpuImageList(spu.id)
       if (spuImageResult.code === 200) {
-        this.spuImageList = spuImageResult.data
+        const imageList = spuImageResult.data
+        imageList.forEach(item => {
+          item.name = item.imgName
+          item.url = item.imgUrl
+        })
+        this.spuImageList = imageList
       }
       const saleResult = await reqBaseSaleAttrList()
       if (saleResult.code === 200) {
