@@ -73,7 +73,7 @@
         </el-pagination>
       </div>
       <SpuForm v-show="scene===1" ref="spu" @changeScene="changeScene"></SpuForm>
-      <SkuForm v-show="scene===2" ref="sku"></SkuForm>
+      <SkuForm v-show="scene===2" ref="sku" @changeSceneSkuForm="changeSceneSkuForm"></SkuForm>
     </el-card>
   </div>
 </template>
@@ -154,6 +154,9 @@ export default {
     addSku(row) {
       this.scene = 2
       this.$refs.sku.getData(this.category1Id, this.category2Id, row)
+    },
+    changeSceneSkuForm(scene) {
+      this.scene = scene
     }
   }
 }

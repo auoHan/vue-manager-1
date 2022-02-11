@@ -6,13 +6,23 @@
         <el-input v-model="skuInfo.skuName" placeholder="sku名称"/>
       </el-form-item>
       <el-form-item label="价格(元)">
-        <el-input-number v-model="skuInfo.price" :precision="2" placeholder="价格(元)" controls-position="right" :min="1"
-                         :max="99999"
+        <el-input-number
+          v-model="skuInfo.price"
+          :precision="2"
+          placeholder="价格(元)"
+          controls-position="right"
+          :min="1"
+          :max="99999"
         />
       </el-form-item>
       <el-form-item label="重量(千克)">
-        <el-input-number v-model="skuInfo.weight" :precision="2" placeholder="重量(千克)" controls-position="right" :min="1"
-                         :max="9999"
+        <el-input-number
+          v-model="skuInfo.weight"
+          :precision="2"
+          placeholder="重量(千克)"
+          controls-position="right"
+          :min="1"
+          :max="9999"
         />
       </el-form-item>
       <el-form-item label="规格描述">
@@ -22,8 +32,11 @@
         <el-form ref="form" :inline="true" label-width="80px">
           <el-form-item v-for="attr in attrInfoList" :key="attr.id" :label="attr.attrName">
             <el-select v-model="attr.attrIdAndAttrValueId" placeholder="请选择">
-              <el-option v-for="attrValue in attr.attrValueList" :key="attrValue.id" :label="attrValue.valueName"
-                         :value="`${attr.id}:${attrValue.id}`"
+              <el-option
+                v-for="attrValue in attr.attrValueList"
+                :key="attrValue.id"
+                :label="attrValue.valueName"
+                :value="`${attr.id}:${attrValue.id}`"
               />
             </el-select>
           </el-form-item>
@@ -33,8 +46,11 @@
         <el-form ref="form" :inline="true" label-width="80px">
           <el-form-item v-for="saleAttr in spuSaleAttrList" :key="saleAttr.id" :label="saleAttr.saleAttrName">
             <el-select v-model="saleAttr.saleAttrIdAndSaleAttrValueId" placeholder="请选择">
-              <el-option v-for="saleAttrValue in saleAttr.spuSaleAttrValueList" :key="saleAttrValue.id"
-                         :label="saleAttrValue.saleAttrValueName" :value="`${saleAttr.id}:${saleAttrValue.id}`"
+              <el-option
+                v-for="saleAttrValue in saleAttr.spuSaleAttrValueList"
+                :key="saleAttrValue.id"
+                :label="saleAttrValue.saleAttrValueName"
+                :value="`${saleAttr.id}:${saleAttrValue.id}`"
               />
             </el-select>
           </el-form-item>
@@ -58,15 +74,15 @@
         </el-table>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
-        <el-button>取消</el-button>
+        <el-button type="primary" @click="save">保存</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import { reqAttrInfoList, reqSpuImageList, reqSpuSaleAttrList } from '@/api/product/spu'
+import { reqAddSku, reqAttrInfoList, reqSpuImageList, reqSpuSaleAttrList } from '@/api/product/spu'
 
 export default {
   name: 'SkuForm',
@@ -159,6 +175,46 @@ export default {
       })
       row.isDefault = 1
       this.skuInfo.skuDefaultImg = row.imgUrl
+    },
+    cancel() {
+      this.$emit('changeSceneSkuForm', 0)
+      Object.assign(this._data, this.$options.data())
+    },
+    async save() {
+      const { attrInfoList, skuInfo, spuSaleAttrList, imageList } = this
+      /* attrInfoList.forEach(item => {
+        if (item.attrIdAndAttrValueId) {
+          const [attrId, valueId] = item.attrIdAndAttrValueId.split(':')
+          skuInfo.skuAttrValueList.push({ attrId, valueId })
+        }
+      }) */
+      skuInfo.skuAttrValueList = attrInfoList.reduce((prev, item) => {
+        if (item.attrIdAndAttrValueId) {
+          const [attrId, valueId] = item.attrIdAndAttrValueId.split(':')
+          prev.push({ attrId, valueId })
+        }
+        return prev
+      }, [])
+      skuInfo.skuSaleAttrValueList = spuSaleAttrList.reduce((prev, item) => {
+        if (item.saleAttrIdAndSaleAttrValueId) {
+          const [saleAttrId, saleAttrValueId] = item.saleAttrIdAndSaleAttrValueId.split(':')
+          prev.push({ saleAttrId, saleAttrValueId })
+        }
+        return prev
+      }, [])
+      skuInfo.skuImageList = imageList.map(item => {
+        return {
+          imgName: item.imgName,
+          imgUrl: item.imgUrl,
+          isDefault: item.isDefault,
+          spuImgId: item.id
+        }
+      })
+      const result = await reqAddSku(skuInfo)
+      if (result.code === 200) {
+        this.$message({ type: 'success', message: '添加SKU成功' })
+        this.$emit('changeSceneSkuForm', 0)
+      }
     }
   }
 }

@@ -22,3 +22,6 @@ export const reqAttrInfoList = (category1Id, category2Id, category3Id) => reques
   url: `/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`,
   method: 'get'
 })
+// 添加SKU
+// /admin/product/saveSkuInfo  post
+export const reqAddSku = (skuInfo) => request({ url: '/admin/product/saveSkuInfo', method: 'post', data: skuInfo })
