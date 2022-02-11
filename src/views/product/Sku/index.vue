@@ -27,8 +27,8 @@
           >
         </template>
       </el-table-column>
-      <el-table-column prop="weight" label="重量" width="80"/>
-      <el-table-column prop="price" label="价格" width="80"/>
+      <el-table-column prop="weight" label="重量" width="80" />
+      <el-table-column prop="price" label="价格" width="80" />
       <el-table-column prop="prop" label="操作" width="width">
         <template v-slot="{ row, $index }">
           <el-button
@@ -55,6 +55,7 @@
             type="info"
             icon="el-icon-info"
             size="mini"
+            @click="getSkuInfo(row)"
           />
           <el-popconfirm
             title="这是一段内容确定删除吗？"
@@ -82,11 +83,44 @@
       @current-change="getSkuList"
       @size-change="handleSizeChange"
     />
+    <!-- 抽屉效果 -->
+    <el-drawer :visible.sync="show" :show-close="false" size="50%">
+      <el-row>
+        <el-col :span="5">名称</el-col>
+        <el-col :span="16">{{ skuInfo.skuName }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">描述</el-col>
+        <el-col :span="16">{{ skuInfo.skuDesc }}</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">价格</el-col>
+        <el-col :span="16">{{ skuInfo.price }}元</el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">平台属性</el-col>
+        <el-col :span="16">
+          <template>
+            <el-tag v-for="attr in skuInfo.skuAttrValueList" :key="attr.id" type="success" style="margin-right:10px">{{ attr.attrName }}-{{ attr.valueName }}</el-tag>
+          </template>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="5">商品图片</el-col>
+        <el-col :span="16">
+          <el-carousel height="450px">
+            <el-carousel-item v-for="item in skuInfo.skuImageList" :key="item.id">
+              <img :src="item.imgUrl">
+            </el-carousel-item>
+          </el-carousel>
+        </el-col>
+      </el-row>
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { reqCancelSale, reqDeleteSku, reqSale, reqSkuList } from '@/api/product/sku'
+import { reqCancelSale, reqDeleteSku, reqSale, reqSkuById, reqSkuList } from '@/api/product/sku'
 
 export default {
   name: 'Sku',
@@ -95,7 +129,9 @@ export default {
       page: 1,
       limit: 3,
       total: 0,
-      records: []
+      records: [],
+      skuInfo: {},
+      show: false
     }
   },
   mounted() {
@@ -142,11 +178,49 @@ export default {
         this.$message({ type: 'success', message: '删除成功' })
         this.getSkuList(this.records.length > 1 ? this.page : this.page - 1)
       }
+    },
+    async getSkuInfo(sku) {
+      this.show = true;
+      const result = await reqSkuById(sku.id)
+      if (result.code === 200) {
+        this.skuInfo = result.data
+      }
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style>
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
+}
 
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n+1) {
+  background-color: #d3dce6;
+}
+</style>
+
+<style scoped>
+.el-row .el-col-5{
+  font-size:18px;
+  text-align:right;
+}
+.el-col{
+  margin:10px 10px;
+}
+
+>>>.el-carousel__button{
+  width:10px;
+  height:10px;
+  background:red;
+  border-radius:50%;
+}
 </style>

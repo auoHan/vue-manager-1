@@ -8,3 +8,5 @@ export const reqSale = (skuId) => request({ url: `/admin/product/onSale/${skuId}
 export const reqCancelSale = (skuId) => request({ url: `/admin/product/cancelSale/${skuId}`, method: 'get' })
 // 删除
 export const reqDeleteSku = (skuId) => request({ url: `/admin/product/deleteSku/${skuId}`, method: 'delete' })
+// 获取SKU详情的接口
+export const reqSkuById = (skuId) => request({ url: `/admin/product/getSkuById/${skuId}`, method: 'get' })
