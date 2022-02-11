@@ -31,12 +31,15 @@
       <el-form-item label="平台属性">
         <el-form ref="form" :inline="true" label-width="80px">
           <el-form-item v-for="attr in attrInfoList" :key="attr.id" :label="attr.attrName">
-            <el-select v-model="attr.attrIdAndAttrValueId" placeholder="请选择">
+            <el-select v-model="attr.attrAndAttrValue" placeholder="请选择">
               <el-option
                 v-for="attrValue in attr.attrValueList"
                 :key="attrValue.id"
                 :label="attrValue.valueName"
-                :value="`${attr.id}:${attrValue.id}`"
+                :value="{'attrId':`${attr.id}`,
+                         'valueId':`${attrValue.id}`,
+                         'attrName':`${attr.attrName}`,
+                         'valueName':`${attrValue.valueName}`}"
               />
             </el-select>
           </el-form-item>
@@ -45,12 +48,16 @@
       <el-form-item label="销售属性">
         <el-form ref="form" :inline="true" label-width="80px">
           <el-form-item v-for="saleAttr in spuSaleAttrList" :key="saleAttr.id" :label="saleAttr.saleAttrName">
-            <el-select v-model="saleAttr.saleAttrIdAndSaleAttrValueId" placeholder="请选择">
+            <el-select v-model="saleAttr.saleAttrAndSaleAttrValue" placeholder="请选择">
               <el-option
                 v-for="saleAttrValue in saleAttr.spuSaleAttrValueList"
                 :key="saleAttrValue.id"
                 :label="saleAttrValue.saleAttrValueName"
-                :value="`${saleAttr.id}:${saleAttrValue.id}`"
+                :value="{'saleAttrId':`${saleAttr.id}`,
+                         'saleAttrValueId':`${saleAttrValue.id}`,
+                         'saleAttrName':`${saleAttr.saleAttrName}`,
+                         'saleAttrValueName':`${saleAttrValue.saleAttrValueName}`,
+                }"
               />
             </el-select>
           </el-form-item>
@@ -119,6 +126,8 @@ export default {
           // {
           //   attrId: 0,
           //   valueId: 0,
+          //   "attrName": "string",
+          //   "valueName": "string"
           // },
         ],
         // 销售属性
@@ -126,6 +135,8 @@ export default {
           // {
           //   saleAttrId: 0,
           //   saleAttrValueId: 0,
+          //   "saleAttrName": "string",
+          //   "saleAttrValueName": "string",
           // },
         ]
       },
@@ -182,16 +193,20 @@ export default {
         }
       }) */
       skuInfo.skuAttrValueList = attrInfoList.reduce((prev, item) => {
-        if (item.attrIdAndAttrValueId) {
-          const [attrId, valueId] = item.attrIdAndAttrValueId.split(':')
-          prev.push({ attrId, valueId })
+        if (item.attrAndAttrValue.attrId && item.attrAndAttrValue.valueId) {
+          const { attrName, valueName } = item.attrAndAttrValue
+          const attrId = parseInt(item.attrAndAttrValue.attrId)
+          const valueId = parseInt(item.attrAndAttrValue.valueId)
+          prev.push({ attrId, valueId, attrName, valueName })
         }
         return prev
       }, [])
       skuInfo.skuSaleAttrValueList = spuSaleAttrList.reduce((prev, item) => {
-        if (item.saleAttrIdAndSaleAttrValueId) {
-          const [saleAttrId, saleAttrValueId] = item.saleAttrIdAndSaleAttrValueId.split(':')
-          prev.push({ saleAttrId, saleAttrValueId })
+        if (item.saleAttrAndSaleAttrValue.saleAttrId && item.saleAttrAndSaleAttrValue.saleAttrValueId) {
+          const { saleAttrName, saleAttrValueName } = item.saleAttrAndSaleAttrValue
+          const saleAttrId = parseInt(item.saleAttrAndSaleAttrValue.saleAttrId)
+          const saleAttrValueId = parseInt(item.saleAttrAndSaleAttrValue.saleAttrValueId)
+          prev.push({ saleAttrId, saleAttrValueId, saleAttrName, saleAttrValueName })
         }
         return prev
       }, [])
