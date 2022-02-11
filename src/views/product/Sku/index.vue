@@ -68,6 +68,7 @@
       layout="prev, pager, next, jumper,->,sizes,total"
       :total="total"
       @current-change="getSkuList"
+      @size-change="handleSizeChange"
     />
   </div>
 </template>
@@ -97,6 +98,10 @@ export default {
         this.records = result.data.records
         this.total = result.data.total
       }
+    },
+    handleSizeChange(limit) {
+      this.limit = limit
+      this.getSkuList()
     }
   }
 }
