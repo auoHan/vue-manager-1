@@ -30,6 +30,7 @@
                 icon="el-icon-plus"
                 size="mini"
                 title="添加sku"
+                @click="addSku(row)"
               ></hint-button>
               <hint-button
                 type="warning"
@@ -72,7 +73,7 @@
         </el-pagination>
       </div>
       <SpuForm v-show="scene===1" ref="spu" @changeScene="changeScene"></SpuForm>
-      <SkuForm v-show="scene===2"></SkuForm>
+      <SkuForm v-show="scene===2" ref="sku"></SkuForm>
     </el-card>
   </div>
 </template>
@@ -149,6 +150,9 @@ export default {
         // 代表SPU个数大于1删除的时候停留在当前页，如果SPU个数小于1 回到上一页
         this.getSpuList(this.records.length > 1 ? this.page : this.page - 1)
       }
+    },
+    addSku(row) {
+      this.scene = 2
     }
   }
 }
