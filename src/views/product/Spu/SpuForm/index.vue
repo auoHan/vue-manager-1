@@ -2,7 +2,7 @@
   <div>
     <el-form ref="form" label-width="80px" :model="spu">
       <el-form-item label="SPU名称">
-        <el-input v-model="spu.spuName" placeholder="SPU名称"/>
+        <el-input v-model="spu.spuName" placeholder="SPU名称" />
       </el-form-item>
       <el-form-item label="品牌">
         <el-select v-model="spu.tmId" placeholder="请选择品牌">
@@ -36,7 +36,7 @@
           :on-success="handlerSuccess"
           :file-list="spuImageList"
         >
-          <i class="el-icon-plus"/>
+          <i class="el-icon-plus" />
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt="">
@@ -69,7 +69,7 @@
             width="80px"
             align="center"
           />
-          <el-table-column prop="saleAttrName" label="属性名" width="width"/>
+          <el-table-column prop="saleAttrName" label="属性名" width="width" />
           <el-table-column prop="prop" label="属性值名称列表" width="width">
             <template v-slot="{ row, $index }">
               <!--  " -->
@@ -267,10 +267,10 @@ export default {
     },
     cancel() {
       this.$emit('changeScene', { scene: 0, flag: '' })
-      //清理数据
-      //Object.assign:es6中新增的方法可以合并对象
-      //组件实例this._data,可以操作data当中响应式数据
-      //this.$options可以获取配置对象，配置对象的data函数执行，返回的响应式数据为空的
+      // 清理数据
+      // Object.assign:es6中新增的方法可以合并对象
+      // 组件实例this._data,可以操作data当中响应式数据
+      // this.$options可以获取配置对象，配置对象的data函数执行，返回的响应式数据为空的
       Object.assign(this._data, this.$options.data())
     }
   }
