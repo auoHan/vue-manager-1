@@ -153,6 +153,7 @@ export default {
     },
     addSku(row) {
       this.scene = 2
+      this.$refs.sku.getData(this.category1Id, this.category2Id, row)
     }
   }
 }
