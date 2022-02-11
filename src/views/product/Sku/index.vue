@@ -27,24 +27,29 @@
           >
         </template>
       </el-table-column>
-      <el-table-column prop="weight" label="重量" width="80"/>
-      <el-table-column prop="price" label="价格" width="80"/>
+      <el-table-column prop="weight" label="重量" width="80" />
+      <el-table-column prop="price" label="价格" width="80" />
       <el-table-column prop="prop" label="操作" width="width">
         <template v-slot="{ row, $index }">
           <el-button
+            v-if="row.isSale===0"
             type="success"
-            icon="el-icon-sort-down"
+            icon="el-icon-bottom"
             size="mini"
+            @click="sale(row)"
           />
           <el-button
+            v-else
             type="success"
-            icon="el-icon-sort-up"
+            icon="el-icon-top"
             size="mini"
+            @click="cancelSale(row)"
           />
           <el-button
             type="primary"
             icon="el-icon-edit"
             size="mini"
+            @click="edit"
           />
           <el-button
             type="info"
@@ -74,7 +79,7 @@
 </template>
 
 <script>
-import { reqSkuList } from '@/api/product/sku'
+import { reqCancelSale, reqSale, reqSkuList } from '@/api/product/sku'
 
 export default {
   name: 'Sku',
@@ -102,6 +107,27 @@ export default {
     handleSizeChange(limit) {
       this.limit = limit
       this.getSkuList()
+    },
+    async sale(sku) {
+      const result = await reqSale(sku.id)
+      if (result.code === 200) {
+        // eslint-disable-next-line require-atomic-updates
+        sku.isSale = 1
+        this.$message({ type: 'success', message: '上架成功' })
+      }
+      console.log(result)
+    },
+    async cancelSale(sku) {
+      const result = await reqCancelSale(sku.id)
+      if (result.code === 200) {
+        // eslint-disable-next-line require-atomic-updates
+        sku.isSale = 0
+        this.$message({ type: 'success', message: '下架成功' })
+      }
+      console.log(result)
+    },
+    edit() {
+      this.$message('正在开发中')
     }
   }
 }
