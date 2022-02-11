@@ -3,22 +3,28 @@
     <el-form ref="form" label-width="80px">
       <el-form-item label="SPU名称">{{ spu.spuName }}</el-form-item>
       <el-form-item label="SKU名称">
-        <el-input v-model="skuInfo.skuName" placeholder="sku名称" />
+        <el-input v-model="skuInfo.skuName" placeholder="sku名称"/>
       </el-form-item>
       <el-form-item label="价格(元)">
-        <el-input-number v-model="skuInfo.price" :precision="2" placeholder="价格(元)" controls-position="right" :min="1" :max="99999" />
+        <el-input-number v-model="skuInfo.price" :precision="2" placeholder="价格(元)" controls-position="right" :min="1"
+                         :max="99999"
+        />
       </el-form-item>
       <el-form-item label="重量(千克)">
-        <el-input-number v-model="skuInfo.weight" :precision="2" placeholder="重量(千克)" controls-position="right" :min="1" :max="9999" />
+        <el-input-number v-model="skuInfo.weight" :precision="2" placeholder="重量(千克)" controls-position="right" :min="1"
+                         :max="9999"
+        />
       </el-form-item>
       <el-form-item label="规格描述">
-        <el-input v-model="skuInfo.skuDesc" placeholder="规格描述" type="textarea" rows="4" />
+        <el-input v-model="skuInfo.skuDesc" placeholder="规格描述" type="textarea" rows="4"/>
       </el-form-item>
       <el-form-item label="平台属性">
         <el-form ref="form" :inline="true" label-width="80px">
           <el-form-item v-for="attr in attrInfoList" :key="attr.id" :label="attr.attrName">
             <el-select v-model="attr.attrIdAndAttrValueId" placeholder="请选择">
-              <el-option v-for="attrValue in attr.attrValueList" :key="attrValue.id" :label="attrValue.valueName" :value="`${attr.id}:${attrValue.id}`" />
+              <el-option v-for="attrValue in attr.attrValueList" :key="attrValue.id" :label="attrValue.valueName"
+                         :value="`${attr.id}:${attrValue.id}`"
+              />
             </el-select>
           </el-form-item>
         </el-form>
@@ -27,24 +33,25 @@
         <el-form ref="form" :inline="true" label-width="80px">
           <el-form-item v-for="saleAttr in spuSaleAttrList" :key="saleAttr.id" :label="saleAttr.saleAttrName">
             <el-select v-model="saleAttr.saleAttrIdAndSaleAttrValueId" placeholder="请选择">
-              <el-option v-for="saleAttrValue in saleAttr.spuSaleAttrValueList" :key="saleAttrValue.id" :label="saleAttrValue.saleAttrValueName" :value="`${saleAttr.id}:${saleAttrValue.id}`" />
+              <el-option v-for="saleAttrValue in saleAttr.spuSaleAttrValueList" :key="saleAttrValue.id"
+                         :label="saleAttrValue.saleAttrValueName" :value="`${saleAttr.id}:${saleAttrValue.id}`"
+              />
             </el-select>
           </el-form-item>
         </el-form>
       </el-form-item>
       <el-form-item label="图片列表">
-        <!--@selection-change="handleSelectionChange"-->
-        <el-table style="width: 100%" border>
-          <el-table-column type="selection" align="center" prop="prop" width="80" />
+        <el-table style="width: 100%" border :data="spuImageList" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" align="center" prop="prop" width="80"/>
           <el-table-column prop="prop" label="图片" width="width">
-            <template slot-scope="{row,$index}">
+            <template v-slot="{row,$index}">
               <img :src="row.imgUrl" style="width:100px;height:100px">
             </template>
           </el-table-column>
-          <el-table-column prop="imgName" label="名称" width="width" />
+          <el-table-column prop="imgName" label="名称" width="width"/>
           <el-table-column prop="prop" label="操作" width="width">
-            <template slot-scope="{row,$index}">
-              <el-button v-if="row.isDefault===0" type="primary">设置默认</el-button>
+            <template v-slot="{row,$index}">
+              <el-button v-if="row.isDefault===0" type="primary" @click="changeDefault(row)">设置默认</el-button>
               <el-button v-else>默认</el-button>
             </template>
           </el-table-column>
@@ -127,7 +134,11 @@ export default {
       this.skuInfo.tmId = spu.tmId
       const spuImageResult = await reqSpuImageList(spu.id)
       if (spuImageResult.code === 200) {
-        this.spuImageList = spuImageResult.data
+        const list = spuImageResult.data
+        list.forEach(item => {
+          item.isDefault = 0
+        })
+        this.spuImageList = list
       }
       const saleAttrResult = await reqSpuSaleAttrList(spu.id)
       if (saleAttrResult.code === 200) {
@@ -137,6 +148,17 @@ export default {
       if (attrInfoResult.code === 200) {
         this.attrInfoList = attrInfoResult.data
       }
+    },
+    handleSelectionChange(value) {
+      this.imageList = value
+    },
+    changeDefault(row) {
+      console.log(row)
+      this.spuImageList.forEach(item => {
+        item.isDefault = 0
+      })
+      row.isDefault = 1
+      this.skuInfo.skuDefaultImg = row.imgUrl
     }
   }
 }
