@@ -27,8 +27,8 @@
           >
         </template>
       </el-table-column>
-      <el-table-column prop="weight" label="重量" width="80" />
-      <el-table-column prop="price" label="价格" width="80" />
+      <el-table-column prop="weight" label="重量" width="80"/>
+      <el-table-column prop="price" label="价格" width="80"/>
       <el-table-column prop="prop" label="操作" width="width">
         <template v-slot="{ row, $index }">
           <el-button
@@ -56,11 +56,18 @@
             icon="el-icon-info"
             size="mini"
           />
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-          />
+          <el-popconfirm
+            title="这是一段内容确定删除吗？"
+            @onConfirm="deleteSku(row)"
+          >
+            <el-button
+              slot="reference"
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              style="margin-left: 10px"
+            />
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -79,7 +86,7 @@
 </template>
 
 <script>
-import { reqCancelSale, reqSale, reqSkuList } from '@/api/product/sku'
+import { reqCancelSale, reqDeleteSku, reqSale, reqSkuList } from '@/api/product/sku'
 
 export default {
   name: 'Sku',
@@ -128,6 +135,13 @@ export default {
     },
     edit() {
       this.$message('正在开发中')
+    },
+    async deleteSku(sku) {
+      const result = await reqDeleteSku(sku.id)
+      if (result.code === 200) {
+        this.$message({ type: 'success', message: '删除成功' })
+        this.getSkuList(this.records.length > 1 ? this.page : this.page - 1)
+      }
     }
   }
 }
