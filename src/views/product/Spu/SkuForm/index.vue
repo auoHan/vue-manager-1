@@ -108,11 +108,9 @@ export default {
         // 收集图片的字段
         skuImageList: [
           // {
-          //   id: 0,
           //   imgName: "string",
           //   imgUrl: "string",
           //   isDefault: "string",
-          //   skuId: 0,
           //   spuImgId: 0,
           // },
         ],
@@ -126,13 +124,8 @@ export default {
         // 销售属性
         skuSaleAttrValueList: [
           // {
-          //   id: 0,
           //   saleAttrId: 0,
-          //   saleAttrName: "string",
           //   saleAttrValueId: 0,
-          //   saleAttrValueName: "string",
-          //   skuId: 0,
-          //   spuId: 0,
           // },
         ]
       },
