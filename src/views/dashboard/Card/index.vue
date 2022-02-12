@@ -152,7 +152,7 @@
         <el-card>
           <Detail title="访问量" count="89370">
             <template v-slot:charts>
-              <div>charts</div>
+              <LineCharts/>
             </template>
             <template v-slot:footer>
               <span>日访问量 1678</span>
@@ -164,7 +164,7 @@
         <el-card>
           <Detail title="支付笔数" count="67810">
             <template v-slot:charts>
-              <div>charts</div>
+              <BarCharts/>
             </template>
             <template v-slot:footer>
               <span>转换率58%</span>
@@ -176,7 +176,7 @@
         <el-card>
           <Detail title="运营活动效果" count="88%">
             <template v-slot:charts>
-              <div>charts</div>
+              <ProgressCharts/>
             </template>
             <template v-slot:footer>
               <span>周同比&nbsp;&nbsp;34.39%
@@ -325,10 +325,15 @@
 
 <script>
 import Detail from '@/views/dashboard/Card/Detail'
+import LineCharts from './LineCharts'
+import BarCharts from './BarCharts'
+import ProgressCharts from './ProgressCharts'
 
 export default {
   name: 'Card',
-  components: { Detail }
+  components: {
+    Detail, LineCharts, BarCharts, ProgressCharts
+  }
 }
 </script>
 
